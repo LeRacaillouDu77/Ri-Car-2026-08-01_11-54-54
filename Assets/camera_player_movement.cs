@@ -3,6 +3,7 @@ using UnityEngine;
 public class MouseLook : MonoBehaviour
 {
     public float mouseSensitivity = 100f;
+    public float zoomSpeed = 2f;
     public Transform playerBody;
 
     float xRotation = 0f;
@@ -18,6 +19,7 @@ public class MouseLook : MonoBehaviour
         // Récupère les mouvements de la souris
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        float mouseScroll = Input.GetAxis("Mouse ScrollWheel") * zoomSpeed;
 
         // Rotation verticale de la caméra
         xRotation -= mouseY;
@@ -27,5 +29,8 @@ public class MouseLook : MonoBehaviour
 
         // Rotation horizontale du joueur
         playerBody.Rotate(Vector3.up * mouseX);
+
+        // Déplacement sur l'axe manquant (zoom / profondeur)
+        transform.localPosition += Vector3.forward * mouseScroll;
     }
 }

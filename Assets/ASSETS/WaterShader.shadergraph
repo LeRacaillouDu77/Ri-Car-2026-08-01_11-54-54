@@ -813,7 +813,7 @@
     "m_StageCapability": 3,
     "m_CustomBinding": "",
     "m_Value": {
-        "x": 3.0,
+        "x": 2.0,
         "y": 2.0,
         "z": 2.0,
         "w": 2.0
@@ -1382,7 +1382,7 @@
     "m_ShaderOutputName": "Scale",
     "m_StageCapability": 3,
     "m_CustomBinding": "",
-    "m_Value": 7.0,
+    "m_Value": 20.0,
     "m_DefaultValue": 10.0,
     "m_Labels": [],
     "m_LiteralMode": false
@@ -1434,7 +1434,7 @@
     "m_ShaderOutputName": "CellDensity",
     "m_StageCapability": 3,
     "m_CustomBinding": "",
-    "m_Value": 4.0,
+    "m_Value": 1.0,
     "m_DefaultValue": 5.0,
     "m_Labels": [],
     "m_LiteralMode": false

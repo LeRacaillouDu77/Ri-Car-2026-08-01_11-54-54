@@ -8,6 +8,7 @@ public class InteractionVoiture : MonoBehaviour
 
     [Header("Joueur")]
     public GameObject player;
+    public Camera cameraJoueur;
     public MonoBehaviour walkScript;
     public MonoBehaviour mouseLookScript;
 
@@ -24,15 +25,29 @@ public class InteractionVoiture : MonoBehaviour
     public float rayonJoueur = 0.4f;
     public float hauteurJoueur = 2f;
 
-    private Camera cameraJoueur;
     private bool dansLaVoiture = false;
+    private Renderer[] playerRenderers;
+    private Collider[] playerColliders;
+    private bool[] playerRendererStates;
+    private bool[] playerColliderStates;
 
     void Start()
     {
-        cameraJoueur = GetComponent<Camera>();
+        if (cameraJoueur == null)
+        {
+            Debug.LogWarning("cameraJoueur n'est pas assignée sur InteractionVoiture.");
+        }
 
         cameraVoiture.gameObject.SetActive(false);
         carController.enabled = false;
+
+        if (player != null)
+        {
+            playerRenderers = player.GetComponentsInChildren<Renderer>(true);
+            playerColliders = player.GetComponentsInChildren<Collider>(true);
+            playerRendererStates = new bool[playerRenderers.Length];
+            playerColliderStates = new bool[playerColliders.Length];
+        }
     }
 
     void Update()
@@ -42,6 +57,7 @@ public class InteractionVoiture : MonoBehaviour
         {
             if (Keyboard.current.eKey.wasPressedThisFrame)
             {
+                Debug.Log(">>> CIBLE TOUCHEE !");
                 SortirVoiture();
             }
 
@@ -79,7 +95,9 @@ public class InteractionVoiture : MonoBehaviour
         walkScript.enabled = false;
         mouseLookScript.enabled = false;
 
-        player.SetActive(false);
+        SavePlayerState();
+        SetPlayerVisible(false);
+        SetPlayerCollisions(false);
 
         carController.enabled = true;
     }
@@ -98,10 +116,10 @@ public class InteractionVoiture : MonoBehaviour
 
         carController.enabled = false;
 
-        player.SetActive(true);
-
         player.transform.position = pointLibre.position;
         player.transform.rotation = Quaternion.Euler(0, pointLibre.eulerAngles.y, 0);
+
+        RestorePlayerState();
 
         walkScript.enabled = true;
         mouseLookScript.enabled = true;
@@ -134,6 +152,64 @@ public class InteractionVoiture : MonoBehaviour
         }
 
         return null;
+    }
+
+    void SavePlayerState()
+    {
+        if (playerRenderers != null)
+        {
+            for (int i = 0; i < playerRenderers.Length; i++)
+            {
+                playerRendererStates[i] = playerRenderers[i].enabled;
+            }
+        }
+
+        if (playerColliders != null)
+        {
+            for (int i = 0; i < playerColliders.Length; i++)
+            {
+                playerColliderStates[i] = playerColliders[i].enabled;
+            }
+        }
+    }
+
+    void RestorePlayerState()
+    {
+        if (playerRenderers != null && playerRendererStates != null)
+        {
+            for (int i = 0; i < playerRenderers.Length; i++)
+            {
+                playerRenderers[i].enabled = playerRendererStates[i];
+            }
+        }
+
+        if (playerColliders != null && playerColliderStates != null)
+        {
+            for (int i = 0; i < playerColliders.Length; i++)
+            {
+                playerColliders[i].enabled = playerColliderStates[i];
+            }
+        }
+    }
+
+    void SetPlayerVisible(bool visible)
+    {
+        if (playerRenderers == null) return;
+
+        foreach (Renderer renderer in playerRenderers)
+        {
+            renderer.enabled = visible;
+        }
+    }
+
+    void SetPlayerCollisions(bool enabled)
+    {
+        if (playerColliders == null) return;
+
+        foreach (Collider collider in playerColliders)
+        {
+            collider.enabled = enabled;
+        }
     }
 
     void OnDrawGizmos()
